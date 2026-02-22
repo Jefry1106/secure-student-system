@@ -1,0 +1,63 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Student Panel</title>
+
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+  </head>
+
+  <body class="bg-dark text-white">
+    <div class="container mt-4">
+      <h2>Mis Notas</h2>
+
+      <button onclick="logout()" class="btn btn-danger">Logout</button>
+
+      <hr />
+
+      <button onclick="loadGrades()" class="btn btn-primary">Ver Notas</button>
+
+      <table class="table table-dark mt-3">
+        <thead>
+          <tr>
+            <th>Materia</th>
+
+            <th>Nota</th>
+          </tr>
+        </thead>
+
+        <tbody id="grades"></tbody>
+      </table>
+    </div>
+
+    <script src="js/auth.js"></script>
+
+    <script>
+      async function loadGrades() {
+        const response = await fetch(API + "/grades/my-grades", {
+          headers: getHeaders(),
+        });
+
+        const data = await response.json();
+
+        grades.innerHTML = "";
+
+        data.forEach((g) => {
+          grades.innerHTML += `
+
+<tr>
+
+<td>${g.name}</td>
+
+<td>${g.grade}</td>
+
+</tr>
+
+`;
+        });
+      }
+    </script>
+  </body>
+</html>

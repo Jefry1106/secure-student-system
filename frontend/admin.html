@@ -1,0 +1,81 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Admin Panel</title>
+
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+  </head>
+
+  <body class="bg-dark text-white">
+    <div class="container mt-4">
+      <h2>Panel Administrador</h2>
+
+      <button onclick="logout()" class="btn btn-danger">Logout</button>
+
+      <hr />
+
+      <h4>Crear Materia</h4>
+
+      <input id="subject" class="form-control mb-2" />
+
+      <button onclick="createSubject()" class="btn btn-primary">Crear</button>
+
+      <hr />
+
+      <h4>Asignar Nota</h4>
+
+      <input
+        id="student_id"
+        class="form-control mb-2"
+        placeholder="Student ID"
+      />
+
+      <input
+        id="subject_id"
+        class="form-control mb-2"
+        placeholder="Subject ID"
+      />
+
+      <input id="grade" class="form-control mb-2" placeholder="Grade" />
+
+      <button onclick="assignGrade()" class="btn btn-success">Asignar</button>
+    </div>
+
+    <script src="js/auth.js"></script>
+
+    <script>
+      async function createSubject() {
+        await fetch(API + "/subjects", {
+          method: "POST",
+
+          headers: getHeaders(),
+
+          body: JSON.stringify({
+            name: subject.value,
+          }),
+        });
+
+        alert("Materia creada");
+      }
+
+      async function assignGrade() {
+        await fetch(API + "/grades/assign", {
+          method: "POST",
+
+          headers: getHeaders(),
+
+          body: JSON.stringify({
+            student_id: student_id.value,
+            subject_id: subject_id.value,
+            grade: grade.value,
+          }),
+        });
+
+        alert("Nota asignada");
+      }
+    </script>
+  </body>
+</html>

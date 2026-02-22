@@ -1,0 +1,35 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Dashboard</title>
+  </head>
+  <body>
+    <h2>Dashboard Usuario</h2>
+
+    <button onclick="getProfile()">Ver Perfil</button>
+
+    <pre id="result"></pre>
+
+    <script>
+      const token = localStorage.getItem("token");
+
+      async function getProfile() {
+        const response = await fetch("http://localhost:3000/api/auth/profile", {
+          method: "GET",
+
+          headers: {
+            Authorization: "Bearer " + token,
+          },
+        });
+
+        const data = await response.json();
+
+        document.getElementById("result").innerText = JSON.stringify(
+          data,
+          null,
+          2,
+        );
+      }
+    </script>
+  </body>
+</html>

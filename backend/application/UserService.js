@@ -39,6 +39,10 @@ class UserService {
 
         }
 
+        if (!process.env.JWT_SECRET) {
+            throw new Error("JWT_SECRET no está configurado");
+        }
+
         const token = jwt.sign(
 
             {
@@ -47,9 +51,9 @@ class UserService {
                 role: user.role
             },
 
-            "secretkey",
+            process.env.JWT_SECRET,
 
-            { expiresIn: "1h" }
+            {  expiresIn: process.env.JWT_EXPIRES }
 
         );
 

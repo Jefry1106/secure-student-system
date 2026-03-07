@@ -11,42 +11,159 @@
 
   <body class="bg-dark text-white">
     <div class="container mt-4">
-      <h2>Panel Administrador</h2>
+      <h2 class="mb-4">Panel Administrador</h2>
 
-      <button onclick="logout()" class="btn btn-danger">Logout</button>
+      <button onclick="logout()" class="btn btn-danger mb-4">Logout</button>
 
-      <hr />
+      <!-- CREAR MATERIA -->
 
-      <h4>Crear Materia</h4>
+      <div class="card bg-secondary mb-4">
+        <div class="card-body">
+          <h4>Crear Materia</h4>
 
-      <input id="subject" class="form-control mb-2" />
+          <div class="row">
+            <div class="col-md-6">
+              <input
+                id="subject"
+                class="form-control"
+                placeholder="Nombre materia"
+              />
+            </div>
 
-      <button onclick="createSubject()" class="btn btn-primary">Crear</button>
+            <div class="col-md-3">
+              <button onclick="createSubject()" class="btn btn-primary w-100">
+                Crear
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
 
-      <hr />
+      <!-- LISTA DE MATERIAS -->
 
-      <h4>Asignar Nota</h4>
+      <div class="card bg-secondary mb-4">
+        <div class="card-body">
+          <h4>Materias</h4>
 
-      <input
-        id="student_id"
-        class="form-control mb-2"
-        placeholder="Student ID"
-      />
+          <table class="table table-dark table-striped">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Nombre</th>
+              </tr>
+            </thead>
 
-      <input
-        id="subject_id"
-        class="form-control mb-2"
-        placeholder="Subject ID"
-      />
+            <tbody id="subjectsTable"></tbody>
+          </table>
+        </div>
+      </div>
 
-      <input id="grade" class="form-control mb-2" placeholder="Grade" />
+      <!-- ASIGNAR NOTA -->
 
-      <button onclick="assignGrade()" class="btn btn-success">Asignar</button>
+      <div class="card bg-secondary mb-4">
+        <div class="card-body">
+          <h4>Asignar Nota</h4>
+
+          <select id="student_id" class="form-control mb-2"></select>
+
+          <select id="subject_id" class="form-control mb-2"></select>
+
+          <input id="grade" class="form-control mb-2" placeholder="Nota" />
+
+          <button onclick="assignGrade()" class="btn btn-success">
+            Asignar Nota
+          </button>
+        </div>
+      </div>
+
+      <!-- TABLA DE NOTAS -->
+
+      <div class="card bg-secondary">
+        <div class="card-body">
+          <h4>Notas Registradas</h4>
+
+          <table class="table table-dark table-striped">
+            <thead>
+              <tr>
+                <th>Estudiante</th>
+                <th>Materia</th>
+                <th>Nota</th>
+              </tr>
+            </thead>
+
+            <tbody id="gradesTable"></tbody>
+          </table>
+        </div>
+      </div>
     </div>
 
     <script src="js/auth.js"></script>
 
     <script>
+      async function loadSubjects() {
+        const res = await fetch(API + "/subjects", {
+          headers: getHeaders(),
+        });
+
+        const data = await res.json();
+
+        subjectsTable.innerHTML = "";
+        subject_id.innerHTML = "";
+
+        data.forEach((s) => {
+          subjectsTable.innerHTML += `
+<tr>
+<td>${s.id}</td>
+<td>${s.name}</td>
+</tr>
+`;
+
+          subject_id.innerHTML += `
+<option value="${s.id}">
+${s.name}
+</option>
+`;
+        });
+      }
+
+      async function loadStudents() {
+        const res = await fetch(API + "/users/students", {
+          headers: getHeaders(),
+        });
+
+        const data = await res.json();
+
+        student_id.innerHTML = "";
+
+        data.forEach((s) => {
+          student_id.innerHTML += `
+<option value="${s.id}">
+${s.name} (${s.email})
+</option>
+`;
+        });
+      }
+
+      async function loadGrades() {
+        const res = await fetch(API + "/grades", {
+          headers: getHeaders(),
+        });
+
+        const data = await res.json();
+
+        gradesTable.innerHTML = "";
+
+        data.forEach((g) => {
+          gradesTable.innerHTML += `
+<tr>
+<td>${g.student}</td>
+<td>${g.subject}</td>
+<td>${g.grade}</td>
+</tr>
+`;
+        });
+      }
+
       async function createSubject() {
         await fetch(API + "/subjects", {
           method: "POST",
@@ -58,7 +175,9 @@
           }),
         });
 
-        alert("Materia creada");
+        subject.value = "";
+
+        loadSubjects();
       }
 
       async function assignGrade() {
@@ -74,8 +193,14 @@
           }),
         });
 
-        alert("Nota asignada");
+        grade.value = "";
+
+        loadGrades();
       }
+
+      loadSubjects();
+      loadStudents();
+      loadGrades();
     </script>
   </body>
 </html>

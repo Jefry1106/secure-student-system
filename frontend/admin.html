@@ -48,24 +48,17 @@
 
     <script>
       async function createSubject() {
-        const res = await fetch(API + "/api/subjects", {
+        await fetch(API + "/subjects", {
           method: "POST",
-          headers: {
-            ...getHeaders(),
-            "Content-Type": "application/json",
-          },
+
+          headers: getHeaders(),
+
           body: JSON.stringify({
             name: subject.value,
           }),
         });
 
-        const data = await res.json();
-
-        if (res.ok) {
-          alert("Materia creada");
-        } else {
-          alert("Error: " + data.error);
-        }
+        alert("Materia creada");
       }
 
       async function assignGrade() {

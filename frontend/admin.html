@@ -197,11 +197,13 @@ ${s.name} (${s.email})
 
         loadGrades();
       }
+      (function() {
 promise.all([
       loadSubjects(),
       loadStudents(),
       loadGrades(),
     ]).catch(error => console.error('Error cargando datos:', error));
+      }) ();
     </script>
   </body>
 </html>

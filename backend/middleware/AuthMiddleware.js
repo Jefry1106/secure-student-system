@@ -1,6 +1,6 @@
 const jwt = require("jsonwebtoken");
 
-module.exports = (req, res, next) => {
+module.exports = function verifyToken (req, res, next)  {
 
     const authHeader = req.headers.authorization;
 
@@ -17,11 +17,18 @@ module.exports = (req, res, next) => {
         req.user = decoded;
 
         next();
+    }catch (error){
 
-    } catch (error) {
-
-        return res.status(401).json({ error: "Token inválido o expirado" });
-
+     if (error.name === 'TokenExpiredError') {
+            return res.status(401).json({ error: "Token expirado" });
+        }
+        
+        if (error.name === 'JsonWebTokenError') {
+            return res.status(401).json({ error: "Token inválido" });
+        }
+        
+        // Error inesperado
+        console.error('Error inesperado en middleware de autenticación:', error);
+        return res.status(500).json({ error: "Error interno del servidor" });
     }
 };
-

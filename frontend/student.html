@@ -78,10 +78,9 @@
         }
       }
 
-      // SOLUCIÓN 1: Usar Promise (recomendada)
-      Promise.resolve().then(() => {
-        loadGrades();
-      }).catch(error => console.error('Error:', error));
+     (async () => {
+        await loadGrades();
+      })();
 
       </script>
   </body>

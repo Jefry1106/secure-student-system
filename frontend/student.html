@@ -39,33 +39,50 @@
 
     <script>
       async function loadGrades() {
-        const res = await fetch(API + "/grades/my", {
-          headers: getHeaders(),
-        });
-
-        const data = await res.json();
-
-        gradesTable.innerHTML = "";
-
-        let total = 0;
-
-        data.forEach((g) => {
-          gradesTable.innerHTML += `
-<tr>
-<td>${g.subject}</td>
-<td>${g.grade}</td>
-</tr>
-`;
-
-          total += Number(g.grade);
-        });
-
-        if (data.length > 0) {
-          average.innerText = (total / data.length).toFixed(2);
+        try {
+          const res = await fetch(API + "/grades/my", {
+            headers: getHeaders(),
+          });
+          
+          if (!res.ok) {
+            throw new Error('Error al cargar las notas');
+          }
+          
+          const data = await res.json();
+          const gradesTable = document.getElementById('gradesTable');
+          const averageSpan = document.getElementById('average');
+          
+          gradesTable.innerHTML = "";
+          let total = 0;
+          
+          if (data.length === 0) {
+            gradesTable.innerHTML = '<tr><td colspan="2" class="text-center">No hay notas registradas</td></tr>';
+            averageSpan.innerText = '0';
+          } else {
+            data.forEach((g) => {
+              gradesTable.innerHTML += `
+                <tr>
+                  <td>${g.subject}</td>
+                  <td>${g.grade}</td>
+                </tr>
+              `;
+              total += Number(g.grade);
+            });
+            
+            const promedio = (total / data.length).toFixed(2);
+            averageSpan.innerText = promedio;
+          }
+        } catch (error) {
+          console.error('Error loading grades:', error);
+          document.getElementById('gradesTable').innerHTML = '<tr><td colspan="2" class="text-center text-danger">Error al cargar las notas</td></tr>';
         }
       }
 
-      loadGrades();
-    </script>
+      // SOLUCIÓN 1: Usar Promise (recomendada)
+      Promise.resolve().then(() => {
+        loadGrades();
+      }).catch(error => console.error('Error:', error));
+
+      </script>
   </body>
 </html>
